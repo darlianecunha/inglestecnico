@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maritime & Sustainability English Practice</title>
+<style>
+  :root {
+    --primary: #1a5276;
+    --primary-light: #2980b9;
+    --accent: #27ae60;
+    --accent-light: #2ecc71;
+    --bg: #f0f4f8;
+    --card-bg: #ffffff;
+    --text: #2c3e50;
+    --text-light: #7f8c8d;
+    --border: #dce1e6;
+    --correct: #27ae60;
+    --incorrect: #e74c3c;
+    --highlight: #f39c12;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  }
+
+  header h1 { font-size: 1.6rem; font-weight: 600; margin-bottom: 0.3rem; }
+  header p { font-size: 0.9rem; opacity: 0.85; }
+
+  nav {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: white;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  nav button {
+    padding: 0.6rem 1.2rem;
+    border: 2px solid var(--primary);
+    background: white;
+    color: var(--primary);
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  nav button:hover { background: var(--primary); color: white; }
+  nav button.active { background: var(--primary); color: white; }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 1.5rem; }
+
+  /* ============ WORD LIST MODE ============ */
+  .category-section { margin-bottom: 2rem; }
+
+  .category-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary);
+    padding: 0.6rem 1rem;
+    background: rgba(26,82,118,0.08);
+    border-left: 4px solid var(--primary);
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 0.8rem;
+  }
+
+  .words-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 0.6rem;
+  }
+
+  .word-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    transition: box-shadow 0.2s, transform 0.1s;
+    cursor: pointer;
+  }
+
+  .word-card:hover {
+    box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+    transform: translateY(-1px);
+  }
+
+  .word-card.expanded { grid-column: 1 / -1; }
+
+  .play-btn {
+    background: var(--primary-light);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+  }
+
+  .play-btn:hover { background: var(--primary); }
+
+  .word-info { flex: 1; }
+  .word-term { font-weight: 600; font-size: 1rem; color: var(--text); }
+  .word-phonetic { font-size: 0.8rem; color: var(--primary-light); font-style: italic; margin-left: 0.4rem; }
+  .word-def-en { font-size: 0.85rem; color: var(--text); margin-top: 0.3rem; }
+  .word-def-pt { font-size: 0.82rem; color: var(--text-light); margin-top: 0.15rem; font-style: italic; }
+
+  /* ============ SEARCH & FILTER ============ */
+  .controls {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .search-box {
+    flex: 1;
+    min-width: 220px;
+    padding: 0.6rem 1rem;
+    border: 2px solid var(--border);
+    border-radius: 25px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-box:focus { border-color: var(--primary-light); }
+
+  .filter-select {
+    padding: 0.6rem 1rem;
+    border: 2px solid var(--border);
+    border-radius: 25px;
+    font-size: 0.9rem;
+    background: white;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .stats {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    padding: 0.3rem 0.8rem;
+  }
+
+  /* ============ FLASHCARD MODE ============ */
+  .flashcard-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2rem 0;
+  }
+
+  .flashcard-progress {
+    font-size: 0.9rem;
+    color: var(--text-light);
+  }
+
+  .flashcard {
+    width: 100%;
+    max-width: 500px;
+    min-height: 280px;
+    perspective: 1000px;
+    cursor: pointer;
+  }
+
+  .flashcard-inner {
+    position: relative;
+    width: 100%;
+    min-height: 280px;
+    transition: transform 0.5s;
+    transform-style: preserve-3d;
+  }
+
+  .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+
+  .flashcard-front, .flashcard-back {
+    position: absolute;
+    width: 100%;
+    min-height: 280px;
+    backface-visibility: hidden;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.12);
+  }
+
+  .flashcard-front {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+  }
+
+  .flashcard-front .term { font-size: 1.6rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .flashcard-front .hint { font-size: 0.9rem; opacity: 0.75; margin-top: 1rem; }
+
+  .flashcard-back {
+    background: white;
+    transform: rotateY(180deg);
+    border: 2px solid var(--primary-light);
+  }
+
+  .flashcard-back .term { font-size: 1.3rem; font-weight: 700; color: var(--primary); margin-bottom: 0.8rem; }
+  .flashcard-back .phonetic { font-size: 1rem; color: var(--primary-light); margin-bottom: 0.8rem; }
+  .flashcard-back .def-en { font-size: 0.95rem; color: var(--text); margin-bottom: 0.4rem; }
+  .flashcard-back .def-pt { font-size: 0.9rem; color: var(--text-light); font-style: italic; }
+
+  .flashcard-controls {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .fc-btn {
+    padding: 0.7rem 1.5rem;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  .fc-btn.prev { background: var(--border); color: var(--text); }
+  .fc-btn.prev:hover { background: #c0c7ce; }
+  .fc-btn.flip { background: var(--primary); color: white; }
+  .fc-btn.flip:hover { background: var(--primary-light); }
+  .fc-btn.next { background: var(--accent); color: white; }
+  .fc-btn.next:hover { background: var(--accent-light); }
+  .fc-btn.speak { background: var(--highlight); color: white; }
+  .fc-btn.speak:hover { background: #e67e22; }
+  .fc-btn.shuffle { background: #8e44ad; color: white; }
+  .fc-btn.shuffle:hover { background: #9b59b6; }
+
+  /* ============ QUIZ MODE ============ */
+  .quiz-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1.5rem 0;
+  }
+
+  .quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .quiz-score { font-size: 1.1rem; font-weight: 600; color: var(--primary); }
+  .quiz-progress { font-size: 0.9rem; color: var(--text-light); }
+
+  .quiz-question-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin-bottom: 1.5rem;
+  }
+
+  .quiz-instruction { font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.8rem; }
+  .quiz-term { font-size: 1.4rem; font-weight: 700; color: var(--primary); margin-bottom: 1.5rem; }
+
+  .quiz-options { display: flex; flex-direction: column; gap: 0.6rem; }
+
+  .quiz-option {
+    padding: 0.8rem 1.2rem;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    background: white;
+    text-align: left;
+  }
+
+  .quiz-option:hover:not(.disabled) { border-color: var(--primary-light); background: rgba(41,128,185,0.05); }
+  .quiz-option.correct { border-color: var(--correct); background: rgba(39,174,96,0.1); color: var(--correct); font-weight: 600; }
+  .quiz-option.incorrect { border-color: var(--incorrect); background: rgba(231,76,60,0.1); color: var(--incorrect); }
+  .quiz-option.disabled { cursor: default; opacity: 0.7; }
+
+  .quiz-feedback {
+    margin-top: 1rem;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    display: none;
+  }
+
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct-fb { background: rgba(39,174,96,0.1); color: var(--correct); border: 1px solid var(--correct); }
+  .quiz-feedback.incorrect-fb { background: rgba(231,76,60,0.1); color: var(--incorrect); border: 1px solid var(--incorrect); }
+
+  .quiz-next {
+    display: none;
+    margin: 1rem auto 0;
+    padding: 0.7rem 2rem;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  .quiz-next.show { display: block; }
+
+  .quiz-type-selector {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .quiz-type-btn {
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--accent);
+    background: white;
+    color: var(--accent);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+
+  .quiz-type-btn:hover, .quiz-type-btn.active { background: var(--accent); color: white; }
+
+  .quiz-results {
+    text-align: center;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  }
+
+  .quiz-results h2 { color: var(--primary); margin-bottom: 1rem; }
+  .quiz-results .big-score { font-size: 3rem; font-weight: 700; color: var(--accent); }
+  .quiz-results p { color: var(--text-light); margin: 0.5rem 0; }
+
+  .restart-btn {
+    margin-top: 1.5rem;
+    padding: 0.7rem 2rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 600px) {
+    .words-grid { grid-template-columns: 1fr; }
+    header h1 { font-size: 1.3rem; }
+    .flashcard-front .term { font-size: 1.3rem; }
+    nav button { padding: 0.5rem 0.8rem; font-size: 0.8rem; }
+  }
+
+  .hidden { display: none !important; }
+
+  .speed-control {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-light);
+  }
+
+  .speed-control input { width: 80px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Maritime & Sustainability English Practice</h1>
+  <p>Pronunciation trainer for academic and technical vocabulary</p>
+</header>
+
+<nav>
+  <button class="active" onclick="switchMode('list')">Word List</button>
+  <button onclick="switchMode('flashcard')">Flashcards</button>
+  <button onclick="switchMode('quiz')">Quiz</button>
+</nav>
+
+<div class="container">
+  <!-- ========== WORD LIST ========== -->
+  <div id="listMode">
+    <div class="controls">
+      <input type="text" class="search-box" id="searchBox" placeholder="Search terms..." oninput="filterWords()">
+      <select class="filter-select" id="categoryFilter" onchange="filterWords()">
+        <option value="all">All Categories</option>
+      </select>
+      <div class="speed-control">
+        <label>Speed:</label>
+        <input type="range" id="speechRate" min="0.5" max="1.2" step="0.1" value="0.8">
+        <span id="rateValue">0.8x</span>
+      </div>
+      <div class="stats" id="wordCount"></div>
+    </div>
+    <div id="wordListContent"></div>
+  </div>
+
+  <!-- ========== FLASHCARD ========== -->
+  <div id="flashcardMode" class="hidden">
+    <div class="flashcard-container">
+      <div class="flashcard-progress" id="fcProgress">Card 1 of 10</div>
+      <div class="controls" style="justify-content:center;">
+        <select class="filter-select" id="fcCategoryFilter" onchange="initFlashcards()">
+          <option value="all">All Categories</option>
+        </select>
+        <div class="speed-control">
+          <label>Speed:</label>
+          <input type="range" id="fcSpeechRate" min="0.5" max="1.2" step="0.1" value="0.8">
+          <span id="fcRateValue">0.8x</span>
+        </div>
+      </div>
+      <div class="flashcard" id="flashcard" onclick="flipCard()">
+        <div class="flashcard-inner" id="flashcardInner">
+          <div class="flashcard-front">
+            <div class="term" id="fcFrontTerm"></div>
+            <div class="hint">Click to reveal pronunciation and definition</div>
+          </div>
+          <div class="flashcard-back">
+            <div class="term" id="fcBackTerm"></div>
+            <div class="phonetic" id="fcPhonetic"></div>
+            <div class="def-en" id="fcDefEn"></div>
+            <div class="def-pt" id="fcDefPt"></div>
+          </div>
+        </div>
+      </div>
+      <div class="flashcard-controls">
+        <button class="fc-btn prev" onclick="prevCard()">Previous</button>
+        <button class="fc-btn speak" onclick="speakCurrentFC()">Listen</button>
+        <button class="fc-btn flip" onclick="flipCard()">Flip</button>
+        <button class="fc-btn next" onclick="nextCard()">Next</button>
+        <button class="fc-btn shuffle" onclick="shuffleCards()">Shuffle</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== QUIZ ========== -->
+  <div id="quizMode" class="hidden">
+    <div class="quiz-container">
+      <div class="quiz-type-selector">
+        <button class="quiz-type-btn active" onclick="setQuizType('def2term')">Definition to Term</button>
+        <button class="quiz-type-btn" onclick="setQuizType('term2def')">Term to Definition</button>
+        <button class="quiz-type-btn" onclick="setQuizType('audio')">Audio Quiz</button>
+      </div>
+      <div class="controls" style="justify-content:center;">
+        <select class="filter-select" id="quizCategoryFilter" onchange="startQuiz()">
+          <option value="all">All Categories</option>
+        </select>
+      </div>
+      <div class="quiz-header">
+        <div class="quiz-score" id="quizScore">Score: 0 / 0</div>
+        <div class="quiz-progress" id="quizProgress">Question 1 of 10</div>
+      </div>
+      <div id="quizContent"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==================== WORD DATA ====================
+const wordData = [
+  // SUSTAINABILITY AND DECARBONISATION
+  { term: "Decarbonisation", phonetic: "/diːˌkɑːbənaɪˈzeɪʃən/", category: "Sustainability & Decarbonisation", en: "The process of reducing carbon dioxide emissions from energy and industrial processes.", pt: "Processo de reduzir emissoes de dioxido de carbono de processos energeticos e industriais." },
+  { term: "Sustainability", phonetic: "/səˌsteɪnəˈbɪləti/", category: "Sustainability & Decarbonisation", en: "The ability to meet present needs without compromising future generations' ability to meet theirs.", pt: "Capacidade de atender as necessidades atuais sem comprometer as geracoes futuras." },
+  { term: "Environmental Protection", phonetic: "/ɪnˌvaɪrənˈmentl prəˈtekʃən/", category: "Sustainability & Decarbonisation", en: "Practices and policies aimed at protecting the natural environment from degradation.", pt: "Praticas e politicas para proteger o meio ambiente da degradacao." },
+  { term: "Corporate Social Responsibility", phonetic: "/ˈkɔːpərət ˌsəʊʃəl rɪˌspɒnsəˈbɪləti/", category: "Sustainability & Decarbonisation", en: "A business model where companies integrate social and environmental concerns into their operations.", pt: "Modelo de negocios onde empresas integram preocupacoes sociais e ambientais nas operacoes." },
+  { term: "Sustainable Development Goals", phonetic: "/səˈsteɪnəbl dɪˈveləpmənt ɡəʊlz/", category: "Sustainability & Decarbonisation", en: "The 17 UN goals addressing global challenges including poverty, inequality, and climate change.", pt: "Os 17 objetivos da ONU para desafios globais como pobreza, desigualdade e mudanca climatica." },
+  { term: "Sustainability Reporting", phonetic: "/səˌsteɪnəˈbɪləti rɪˈpɔːtɪŋ/", category: "Sustainability & Decarbonisation", en: "The practice of disclosing an organisation's environmental, social, and governance performance.", pt: "Pratica de divulgar o desempenho ambiental, social e de governanca de uma organizacao." },
+  { term: "Global Reporting Initiative", phonetic: "/ˈɡləʊbəl rɪˈpɔːtɪŋ ɪˈnɪʃətɪv/", category: "Sustainability & Decarbonisation", en: "An international standard for sustainability reporting used by organisations worldwide.", pt: "Padrao internacional para relatorios de sustentabilidade usado por organizacoes mundialmente." },
+  { term: "Circular Economy", phonetic: "/ˈsɜːkjələr ɪˈkɒnəmi/", category: "Sustainability & Decarbonisation", en: "An economic model that aims to eliminate waste and promote the continual use of resources.", pt: "Modelo economico que visa eliminar residuos e promover o uso continuo de recursos." },
+  { term: "Energy Efficiency", phonetic: "/ˈenədʒi ɪˈfɪʃənsi/", category: "Sustainability & Decarbonisation", en: "Using less energy to achieve the same level of output or service.", pt: "Usar menos energia para alcancar o mesmo nivel de producao ou servico." },
+  { term: "Climate Change", phonetic: "/ˈklaɪmət tʃeɪndʒ/", category: "Sustainability & Decarbonisation", en: "Long-term shifts in global temperatures and weather patterns, largely driven by human activities.", pt: "Mudancas de longo prazo nas temperaturas e padroes climaticos globais." },
+  { term: "Triple Bottom Line", phonetic: "/ˈtrɪpl ˈbɒtəm laɪn/", category: "Sustainability & Decarbonisation", en: "A framework measuring success through economic, social, and environmental performance.", pt: "Estrutura que mede sucesso pelo desempenho economico, social e ambiental." },
+  { term: "Carbon Footprint", phonetic: "/ˈkɑːbən ˈfʊtprɪnt/", category: "Sustainability & Decarbonisation", en: "The total amount of greenhouse gases produced by human activities, measured in CO2 equivalents.", pt: "Total de gases de efeito estufa produzidos por atividades humanas, medido em equivalentes de CO2." },
+  { term: "Cleaner Production", phonetic: "/ˈkliːnər prəˈdʌkʃən/", category: "Sustainability & Decarbonisation", en: "A preventive strategy to reduce pollution and waste in industrial processes.", pt: "Estrategia preventiva para reduzir poluicao e residuos em processos industriais." },
+  { term: "Clean Technology", phonetic: "/kliːn tekˈnɒlədʒi/", category: "Sustainability & Decarbonisation", en: "Technology that reduces environmental impact through energy efficiency or reduced emissions.", pt: "Tecnologia que reduz impacto ambiental por eficiencia energetica ou reducao de emissoes." },
+  { term: "European Green Deal", phonetic: "/ˌjʊərəˈpiːən ɡriːn diːl/", category: "Sustainability & Decarbonisation", en: "EU policy package aiming to make Europe climate-neutral by 2050.", pt: "Pacote de politicas da UE visando tornar a Europa climaticamente neutra ate 2050." },
+  { term: "Environmental Management Systems", phonetic: "/ɪnˌvaɪrənˈmentl ˈmænɪdʒmənt ˈsɪstəmz/", category: "Sustainability & Decarbonisation", en: "Structured frameworks (e.g., ISO 14001) for managing an organisation's environmental impact.", pt: "Estruturas (ex: ISO 14001) para gerenciar o impacto ambiental de uma organizacao." },
+  { term: "Green Hydrogen Production", phonetic: "/ɡriːn ˈhaɪdrədʒən prəˈdʌkʃən/", category: "Sustainability & Decarbonisation", en: "Hydrogen produced using renewable energy sources through electrolysis of water.", pt: "Hidrogenio produzido usando fontes de energia renovavel por eletrolise da agua." },
+  { term: "Carbon Capture and Storage", phonetic: "/ˈkɑːbən ˈkæptʃər ənd ˈstɔːrɪdʒ/", category: "Sustainability & Decarbonisation", en: "Technology that captures CO2 emissions from sources and stores them underground.", pt: "Tecnologia que captura emissoes de CO2 de fontes e armazena no subsolo." },
+  { term: "Biofuels and Alternative Fuels", phonetic: "/ˈbaɪəʊfjuːəlz ənd ɔːlˈtɜːnətɪv fjuːəlz/", category: "Sustainability & Decarbonisation", en: "Fuels derived from biological sources or non-conventional sources to replace fossil fuels.", pt: "Combustiveis derivados de fontes biologicas ou nao convencionais para substituir fosseis." },
+  { term: "Cold Ironing", phonetic: "/kəʊld ˈaɪənɪŋ/", category: "Sustainability & Decarbonisation", en: "Supplying shore-side electrical power to ships at berth so they can shut down engines.", pt: "Fornecimento de energia eletrica terrestre a navios atracados para desligar motores." },
+  { term: "Onshore Power Supply", phonetic: "/ˈɒnʃɔːr ˈpaʊər səˈplaɪ/", category: "Sustainability & Decarbonisation", en: "Electrical power provided from land-based sources to vessels while docked in port.", pt: "Energia eletrica fornecida de fontes terrestres para embarcacoes atracadas no porto." },
+  { term: "Stakeholder Engagement", phonetic: "/ˈsteɪkhəʊldər ɪnˈɡeɪdʒmənt/", category: "Sustainability & Decarbonisation", en: "The process of involving parties who have an interest in an organisation's decisions.", pt: "Processo de envolver partes interessadas nas decisoes de uma organizacao." },
+  { term: "Net Zero Commitments", phonetic: "/net ˈzɪərəʊ kəˈmɪtmənts/", category: "Sustainability & Decarbonisation", en: "Pledges to balance greenhouse gas emissions with removals to achieve zero net output.", pt: "Compromissos para equilibrar emissoes de GEE com remocoes para alcanzar emissao liquida zero." },
+  { term: "Climate Change Mitigation", phonetic: "/ˈklaɪmət tʃeɪndʒ ˌmɪtɪˈɡeɪʃən/", category: "Sustainability & Decarbonisation", en: "Actions to reduce or prevent greenhouse gas emissions to limit global warming.", pt: "Acoes para reduzir ou prevenir emissoes de GEE para limitar o aquecimento global." },
+  { term: "Ethical Behaviour", phonetic: "/ˈeθɪkəl bɪˈheɪvjər/", category: "Sustainability & Decarbonisation", en: "Conduct that is morally right and follows accepted standards of professional practice.", pt: "Conduta moralmente correta que segue padroes aceitos de pratica profissional." },
+
+  // TECHNOLOGIES AND DIGITAL TRANSFORMATION
+  { term: "Digital Transformation", phonetic: "/ˈdɪdʒɪtl ˌtrænsfəˈmeɪʃən/", category: "Technologies & Digital Transformation", en: "The integration of digital technology into all areas of a business or sector.", pt: "Integracao de tecnologia digital em todas as areas de um negocio ou setor." },
+  { term: "Big Data Analytics", phonetic: "/bɪɡ ˈdeɪtə ˌænəˈlɪtɪks/", category: "Technologies & Digital Transformation", en: "The process of examining large datasets to discover patterns, correlations, and insights.", pt: "Processo de examinar grandes conjuntos de dados para descobrir padroes e insights." },
+  { term: "Artificial Intelligence", phonetic: "/ˌɑːtɪˈfɪʃəl ɪnˈtelɪdʒəns/", category: "Technologies & Digital Transformation", en: "Computer systems that can perform tasks normally requiring human intelligence.", pt: "Sistemas computacionais que realizam tarefas que normalmente requerem inteligencia humana." },
+  { term: "Machine Learning", phonetic: "/məˈʃiːn ˈlɜːnɪŋ/", category: "Technologies & Digital Transformation", en: "A subset of AI where systems learn and improve from experience without being explicitly programmed.", pt: "Subarea da IA onde sistemas aprendem e melhoram com a experiencia sem programacao explicita." },
+  { term: "Deep Learning", phonetic: "/diːp ˈlɜːnɪŋ/", category: "Technologies & Digital Transformation", en: "A type of machine learning using neural networks with multiple layers to model complex patterns.", pt: "Tipo de aprendizado de maquina usando redes neurais com multiplas camadas." },
+  { term: "Internet of Things", phonetic: "/ˈɪntənet əv θɪŋz/", category: "Technologies & Digital Transformation", en: "A network of physical devices connected to the internet, collecting and sharing data.", pt: "Rede de dispositivos fisicos conectados a internet, coletando e compartilhando dados." },
+  { term: "Cloud Computing", phonetic: "/klaʊd kəmˈpjuːtɪŋ/", category: "Technologies & Digital Transformation", en: "Delivery of computing services over the internet, including storage, processing, and software.", pt: "Fornecimento de servicos de computacao pela internet, incluindo armazenamento e processamento." },
+  { term: "Digital Twins", phonetic: "/ˈdɪdʒɪtl twɪnz/", category: "Technologies & Digital Transformation", en: "Virtual replicas of physical systems used for simulation, monitoring, and optimisation.", pt: "Replicas virtuais de sistemas fisicos usadas para simulacao, monitoramento e otimizacao." },
+  { term: "Autonomous Vessels", phonetic: "/ɔːˈtɒnəməs ˈvesəlz/", category: "Technologies & Digital Transformation", en: "Ships capable of navigating and operating without direct human control.", pt: "Navios capazes de navegar e operar sem controle humano direto." },
+  { term: "Blockchain", phonetic: "/ˈblɒktʃeɪn/", category: "Technologies & Digital Transformation", en: "A decentralised digital ledger that records transactions across multiple computers.", pt: "Livro-razao digital descentralizado que registra transacoes em multiplos computadores." },
+  { term: "Cybersecurity", phonetic: "/ˌsaɪbəsɪˈkjʊərəti/", category: "Technologies & Digital Transformation", en: "The practice of protecting systems, networks, and data from digital attacks.", pt: "Pratica de proteger sistemas, redes e dados contra ataques digitais." },
+  { term: "Robotics and Automation", phonetic: "/rəʊˈbɒtɪks ənd ˌɔːtəˈmeɪʃən/", category: "Technologies & Digital Transformation", en: "The use of robots and automated systems to perform tasks with minimal human intervention.", pt: "Uso de robos e sistemas automatizados para realizar tarefas com minima intervencao humana." },
+  { term: "Augmented Reality", phonetic: "/ɔːɡˈmentɪd riˈæləti/", category: "Technologies & Digital Transformation", en: "Technology that overlays digital information onto the real-world environment.", pt: "Tecnologia que sobrepoe informacoes digitais ao ambiente do mundo real." },
+  { term: "Data Scientist", phonetic: "/ˈdeɪtə ˈsaɪəntɪst/", category: "Technologies & Digital Transformation", en: "A professional who analyses and interprets complex data to help organisations make decisions.", pt: "Profissional que analisa e interpreta dados complexos para ajudar organizacoes em decisoes." },
+
+  // REAL-TIME MONITORING
+  { term: "Geospatial Mapping", phonetic: "/ˌdʒiːəʊˈspeɪʃəl ˈmæpɪŋ/", category: "Real-Time Monitoring & Tracking", en: "The process of creating visual representations of geographic data using GIS tools.", pt: "Processo de criar representacoes visuais de dados geograficos usando ferramentas GIS." },
+  { term: "LiDAR", phonetic: "/ˈlaɪdɑːr/", category: "Real-Time Monitoring & Tracking", en: "Light Detection and Ranging: a remote sensing method using laser light to measure distances.", pt: "Deteccao e Medicao por Luz: metodo de sensoriamento remoto usando laser para medir distancias." },
+  { term: "Edge Computing", phonetic: "/edʒ kəmˈpjuːtɪŋ/", category: "Real-Time Monitoring & Tracking", en: "Processing data near its source rather than sending it to a centralised data centre.", pt: "Processamento de dados proximo a sua fonte em vez de enviar a um centro de dados centralizado." },
+  { term: "Traffic Flow Optimisation", phonetic: "/ˈtræfɪk fləʊ ˌɒptɪmaɪˈzeɪʃən/", category: "Real-Time Monitoring & Tracking", en: "Systems that improve the efficiency of vessel or vehicle movement in port areas.", pt: "Sistemas que melhoram a eficiencia do movimento de embarcacoes ou veiculos em areas portuarias." },
+  { term: "Drones", phonetic: "/drəʊnz/", category: "Real-Time Monitoring & Tracking", en: "Unmanned aerial vehicles used for surveillance, monitoring, and data collection.", pt: "Veiculos aereos nao tripulados usados para vigilancia, monitoramento e coleta de dados." },
+  { term: "Sensors", phonetic: "/ˈsensəz/", category: "Real-Time Monitoring & Tracking", en: "Devices that detect and respond to physical or environmental stimuli.", pt: "Dispositivos que detectam e respondem a estimulos fisicos ou ambientais." },
+
+  // SUSTAINABLE ENERGY AND INFRASTRUCTURE
+  { term: "Renewable Energy Integration", phonetic: "/rɪˈnjuːəbl ˈenədʒi ˌɪntɪˈɡreɪʃən/", category: "Sustainable Energy & Infrastructure", en: "Incorporating renewable energy sources into existing power systems and infrastructure.", pt: "Incorporacao de fontes de energia renovavel em sistemas de energia e infraestrutura existentes." },
+  { term: "Smart Grids", phonetic: "/smɑːt ɡrɪdz/", category: "Sustainable Energy & Infrastructure", en: "Electrical grids that use digital technology to monitor and manage energy distribution.", pt: "Redes eletricas que usam tecnologia digital para monitorar e gerenciar a distribuicao de energia." },
+  { term: "Hydrogen Fuel Cells", phonetic: "/ˈhaɪdrədʒən fjuːəl selz/", category: "Sustainable Energy & Infrastructure", en: "Devices that convert hydrogen into electricity through an electrochemical reaction.", pt: "Dispositivos que convertem hidrogenio em eletricidade por reacao eletroquimica." },
+  { term: "Port Electrification", phonetic: "/pɔːt ɪˌlektrɪfɪˈkeɪʃən/", category: "Sustainable Energy & Infrastructure", en: "The process of converting port operations from fossil fuels to electrical power.", pt: "Processo de converter operacoes portuarias de combustiveis fosseis para energia eletrica." },
+  { term: "Smart Ports", phonetic: "/smɑːt pɔːts/", category: "Sustainable Energy & Infrastructure", en: "Ports that use advanced technology and data analytics to optimise operations.", pt: "Portos que usam tecnologia avancada e analise de dados para otimizar operacoes." },
+  { term: "Predictive Maintenance", phonetic: "/prɪˈdɪktɪv ˈmeɪntənəns/", category: "Sustainable Energy & Infrastructure", en: "Using data analysis to predict when equipment will fail and scheduling maintenance accordingly.", pt: "Uso de analise de dados para prever falhas de equipamentos e programar manutencao." },
+  { term: "Intermodal Transportation", phonetic: "/ˌɪntəˈməʊdl ˌtrænspɔːˈteɪʃən/", category: "Sustainable Energy & Infrastructure", en: "The use of multiple modes of transport (ship, rail, truck) in a single journey.", pt: "Uso de multiplos modos de transporte (navio, trem, caminhao) em uma unica viagem." },
+  { term: "Supply Chain Visibility", phonetic: "/səˈplaɪ tʃeɪn ˌvɪzəˈbɪləti/", category: "Sustainable Energy & Infrastructure", en: "The ability to track goods and materials throughout the entire supply chain.", pt: "Capacidade de rastrear mercadorias e materiais em toda a cadeia de suprimentos." },
+  { term: "Port Community Systems", phonetic: "/pɔːt kəˈmjuːnəti ˈsɪstəmz/", category: "Sustainable Energy & Infrastructure", en: "Digital platforms connecting port stakeholders to share operational information.", pt: "Plataformas digitais que conectam partes interessadas do porto para compartilhar informacoes." },
+  { term: "Battery Storage Solutions", phonetic: "/ˈbætəri ˈstɔːrɪdʒ səˈluːʃənz/", category: "Sustainable Energy & Infrastructure", en: "Systems that store electrical energy in batteries for later use.", pt: "Sistemas que armazenam energia eletrica em baterias para uso posterior." },
+
+  // MARITIME OPERATIONS (FROM PDFs)
+  { term: "Container Ship", phonetic: "/kənˈteɪnər ʃɪp/", category: "Maritime Operations", en: "A cargo vessel designed to carry goods in standardised intermodal containers.", pt: "Navio de carga projetado para transportar mercadorias em conteineres padronizados." },
+  { term: "Bulk Carrier", phonetic: "/bʌlk ˈkæriər/", category: "Maritime Operations", en: "A ship designed to transport unpackaged bulk cargo such as grain, coal, or ore.", pt: "Navio projetado para transportar carga a granel como graos, carvao ou minerio." },
+  { term: "Oil Tanker", phonetic: "/ɔɪl ˈtæŋkər/", category: "Maritime Operations", en: "A vessel designed for the bulk transport of oil or its products.", pt: "Embarcacao projetada para o transporte a granel de petroleo ou seus derivados." },
+  { term: "Roll-on/Roll-off", phonetic: "/rəʊl ɒn rəʊl ɒf/", category: "Maritime Operations", en: "Ships designed to carry wheeled cargo that is driven on and off the vessel.", pt: "Navios projetados para transportar carga com rodas que entra e sai do navio dirigindo." },
+  { term: "Hotelling", phonetic: "/həʊˈtelɪŋ/", category: "Maritime Operations", en: "The period when a ship is docked at port with engines running for onboard power.", pt: "Periodo em que o navio esta atracado no porto com motores funcionando para energia de bordo." },
+  { term: "Manoeuvring", phonetic: "/məˈnuːvərɪŋ/", category: "Maritime Operations", en: "The process of navigating a ship in confined waters, such as entering or leaving a port.", pt: "Processo de navegar um navio em aguas restritas, como entrar ou sair de um porto." },
+  { term: "Berthing", phonetic: "/ˈbɜːθɪŋ/", category: "Maritime Operations", en: "The process of bringing a vessel alongside a wharf or dock.", pt: "Processo de levar uma embarcacao para junto de um cais ou doca." },
+  { term: "Slow Steaming", phonetic: "/sləʊ ˈstiːmɪŋ/", category: "Maritime Operations", en: "Operating ships at lower speeds to reduce fuel consumption and emissions.", pt: "Operar navios em velocidades mais baixas para reduzir consumo de combustivel e emissoes." },
+  { term: "Auxiliary Engine", phonetic: "/ɔːɡˈzɪliəri ˈendʒɪn/", category: "Maritime Operations", en: "A secondary engine on a ship used for power generation and onboard systems.", pt: "Motor secundario de um navio usado para geracao de energia e sistemas de bordo." },
+  { term: "Anchorage", phonetic: "/ˈæŋkərɪdʒ/", category: "Maritime Operations", en: "A designated area where ships can safely anchor while waiting to enter port.", pt: "Area designada onde navios podem ancorar com seguranca enquanto aguardam entrada no porto." },
+  { term: "Cruise Ship", phonetic: "/kruːz ʃɪp/", category: "Maritime Operations", en: "A large passenger vessel used for leisure voyages.", pt: "Grande embarcacao de passageiros usada para viagens de lazer." },
+  { term: "Barge", phonetic: "/bɑːdʒ/", category: "Maritime Operations", en: "A flat-bottomed boat used for transporting heavy goods on rivers and canals.", pt: "Embarcacao de fundo chato usada para transportar cargas pesadas em rios e canais." },
+  { term: "Port Authority", phonetic: "/pɔːt ɔːˈθɒrəti/", category: "Maritime Operations", en: "The governmental or semi-governmental body that manages and oversees port operations.", pt: "Orgao governamental ou semi-governamental que gerencia e supervisiona operacoes portuarias." },
+  { term: "Transhipment", phonetic: "/trænˈʃɪpmənt/", category: "Maritime Operations", en: "The transfer of cargo from one vessel to another at an intermediate port.", pt: "Transferencia de carga de uma embarcacao para outra em um porto intermediario." },
+  { term: "Hinterland", phonetic: "/ˈhɪntəlænd/", category: "Maritime Operations", en: "The inland area served by a port, from which goods are transported to and from the port.", pt: "Area interior servida por um porto, de onde mercadorias sao transportadas para e do porto." },
+
+  // EMISSIONS AND POLLUTANTS (FROM PDFs)
+  { term: "Sulphur Oxides", phonetic: "/ˈsʌlfər ˈɒksaɪdz/", category: "Emissions & Pollutants", en: "Gaseous pollutants (SOx) produced from burning fuel containing sulphur.", pt: "Poluentes gasosos (SOx) produzidos pela queima de combustivel contendo enxofre." },
+  { term: "Nitrogen Oxides", phonetic: "/ˈnaɪtrədʒən ˈɒksaɪdz/", category: "Emissions & Pollutants", en: "Gaseous pollutants (NOx) formed during high-temperature combustion processes.", pt: "Poluentes gasosos (NOx) formados durante processos de combustao em alta temperatura." },
+  { term: "Particulate Matter", phonetic: "/pɑːˈtɪkjələt ˈmætər/", category: "Emissions & Pollutants", en: "Tiny solid or liquid particles suspended in the air that can harm human health.", pt: "Pequenas particulas solidas ou liquidas suspensas no ar que podem prejudicar a saude humana." },
+  { term: "Heavy Fuel Oil", phonetic: "/ˈhevi fjuːəl ɔɪl/", category: "Emissions & Pollutants", en: "A residual fuel used in marine engines, with high viscosity and sulphur content.", pt: "Combustivel residual usado em motores maritimos, com alta viscosidade e teor de enxofre." },
+  { term: "Marine Gas Oil", phonetic: "/məˈriːn ɡæs ɔɪl/", category: "Emissions & Pollutants", en: "A lighter, cleaner marine fuel with lower sulphur content than HFO.", pt: "Combustivel maritimo mais leve e limpo, com menor teor de enxofre que o HFO." },
+  { term: "Emission Factor", phonetic: "/ɪˈmɪʃən ˈfæktər/", category: "Emissions & Pollutants", en: "A coefficient that quantifies emissions per unit of activity (e.g., g/kWh).", pt: "Coeficiente que quantifica emissoes por unidade de atividade (ex: g/kWh)." },
+  { term: "Emission Inventory", phonetic: "/ɪˈmɪʃən ˈɪnvəntri/", category: "Emissions & Pollutants", en: "A comprehensive database of pollutant emissions from various sources in a defined area.", pt: "Banco de dados abrangente de emissoes de poluentes de varias fontes em uma area definida." },
+  { term: "Exhaust Gas Cleaning System", phonetic: "/ɪɡˈzɔːst ɡæs ˈkliːnɪŋ ˈsɪstəm/", category: "Emissions & Pollutants", en: "A device (scrubber) that removes pollutants from ship exhaust gases.", pt: "Dispositivo (scrubber) que remove poluentes dos gases de escape de navios." },
+  { term: "Scrubber", phonetic: "/ˈskrʌbər/", category: "Emissions & Pollutants", en: "Equipment installed on ships to clean exhaust gases before they are released.", pt: "Equipamento instalado em navios para limpar gases de escape antes de serem liberados." },
+  { term: "Bunker Fuel", phonetic: "/ˈbʌŋkər fjuːəl/", category: "Emissions & Pollutants", en: "Fuel used for powering ships, typically heavy fuel oil or marine diesel oil.", pt: "Combustivel usado para alimentar navios, tipicamente oleo combustivel pesado ou diesel maritimo." },
+  { term: "Fuel Sulphur Content", phonetic: "/fjuːəl ˈsʌlfər ˈkɒntent/", category: "Emissions & Pollutants", en: "The percentage of sulphur present in marine fuel, regulated by IMO.", pt: "Percentual de enxofre presente no combustivel maritimo, regulado pela IMO." },
+  { term: "Non-Methane Volatile Organic Compounds", phonetic: "/nɒn ˈmiːθeɪn ˈvɒlətaɪl ɔːˈɡænɪk ˈkɒmpaʊndz/", category: "Emissions & Pollutants", en: "Reactive organic gases (excluding methane) that contribute to air pollution and smog.", pt: "Gases organicos reativos (excluindo metano) que contribuem para poluicao do ar e smog." },
+
+  // REGULATORY AND POLICY (FROM PDFs)
+  { term: "MARPOL Convention", phonetic: "/ˈmɑːpɒl kənˈvenʃən/", category: "Regulatory & Policy", en: "The International Convention for the Prevention of Pollution from Ships.", pt: "Convencao Internacional para a Prevencao da Poluicao por Navios." },
+  { term: "International Maritime Organization", phonetic: "/ˌɪntəˈnæʃənl ˈmærɪtaɪm ˌɔːɡənaɪˈzeɪʃən/", category: "Regulatory & Policy", en: "The UN agency responsible for regulating international shipping.", pt: "Agencia da ONU responsavel por regular o transporte maritimo internacional." },
+  { term: "Emission Control Area", phonetic: "/ɪˈmɪʃən kənˈtrəʊl ˈeəriə/", category: "Regulatory & Policy", en: "A sea area designated by IMO where stricter emission limits apply to ships.", pt: "Area maritima designada pela IMO onde limites de emissao mais rigorosos se aplicam a navios." },
+  { term: "Sulphur Emission Control Area", phonetic: "/ˈsʌlfər ɪˈmɪʃən kənˈtrəʊl ˈeəriə/", category: "Regulatory & Policy", en: "A zone where ships must use fuel with very low sulphur content.", pt: "Zona onde navios devem usar combustivel com teor de enxofre muito baixo." },
+  { term: "Bottom-up Method", phonetic: "/ˈbɒtəm ʌp ˈmeθəd/", category: "Regulatory & Policy", en: "An emission estimation approach based on individual ship activity data.", pt: "Abordagem de estimativa de emissoes baseada em dados de atividade individual de navios." },
+  { term: "Top-down Method", phonetic: "/tɒp daʊn ˈmeθəd/", category: "Regulatory & Policy", en: "An emission estimation approach based on aggregated fuel sales or fleet statistics.", pt: "Abordagem de estimativa de emissoes baseada em vendas agregadas de combustivel ou estatisticas." },
+  { term: "Tier Regulations", phonetic: "/tɪər ˌreɡjuˈleɪʃənz/", category: "Regulatory & Policy", en: "IMO's progressive emission standards (Tier I, II, III) for ship engine NOx limits.", pt: "Padroes progressivos de emissao da IMO (Tier I, II, III) para limites de NOx de motores." },
+
+  // RESEARCH METHODOLOGY (FROM PDFs)
+  { term: "Automatic Identification System", phonetic: "/ˌɔːtəˈmætɪk aɪˌdentɪfɪˈkeɪʃən ˈsɪstəm/", category: "Research Methodology", en: "A tracking system used on ships that transmits vessel position, speed, and identification.", pt: "Sistema de rastreamento usado em navios que transmite posicao, velocidade e identificacao." },
+  { term: "Uncertainty Analysis", phonetic: "/ʌnˈsɜːtənti əˈnæləsɪs/", category: "Research Methodology", en: "A method to quantify the range of possible outcomes and confidence in model results.", pt: "Metodo para quantificar a faixa de resultados possiveis e confianca nos resultados do modelo." },
+  { term: "Trajectory Analysis", phonetic: "/trəˈdʒektəri əˈnæləsɪs/", category: "Research Methodology", en: "The study of movement paths of ships using GPS or AIS data.", pt: "Estudo dos caminhos de movimento de navios usando dados GPS ou AIS." },
+  { term: "Activity-based Method", phonetic: "/ækˈtɪvəti beɪst ˈmeθəd/", category: "Research Methodology", en: "An approach that estimates emissions based on detailed ship operational activities.", pt: "Abordagem que estima emissoes com base em atividades operacionais detalhadas de navios." },
+  { term: "Interpolation", phonetic: "/ɪnˌtɜːpəˈleɪʃən/", category: "Research Methodology", en: "A mathematical technique to estimate unknown values between two known data points.", pt: "Tecnica matematica para estimar valores desconhecidos entre dois pontos de dados conhecidos." },
+  { term: "Differential Optical Absorption Spectroscopy", phonetic: "/ˌdɪfəˈrenʃəl ˈɒptɪkl əbˈzɔːpʃən spekˈtrɒskəpi/", category: "Research Methodology", en: "A technique to measure atmospheric trace gas concentrations using UV/visible light.", pt: "Tecnica para medir concentracoes de gases traco na atmosfera usando luz UV/visivel." },
+  { term: "Bibliometric Analysis", phonetic: "/ˌbɪbliəˈmetrɪk əˈnæləsɪs/", category: "Research Methodology", en: "Statistical analysis of published academic literature to identify trends and patterns.", pt: "Analise estatistica da literatura academica publicada para identificar tendencias e padroes." },
+  { term: "Systematic Literature Review", phonetic: "/ˌsɪstəˈmætɪk ˈlɪtrətʃər rɪˈvjuː/", category: "Research Methodology", en: "A structured method for identifying, evaluating, and synthesising all relevant studies on a topic.", pt: "Metodo estruturado para identificar, avaliar e sintetizar todos os estudos relevantes sobre um tema." },
+  { term: "Peer-reviewed", phonetic: "/pɪər rɪˈvjuːd/", category: "Research Methodology", en: "Academic work that has been evaluated by experts in the same field before publication.", pt: "Trabalho academico avaliado por especialistas na mesma area antes da publicacao." },
+];
+
+// ==================== GLOBAL STATE ====================
+let currentMode = 'list';
+let fcCards = [];
+let fcIndex = 0;
+let fcFlipped = false;
+let quizType = 'def2term';
+let quizQuestions = [];
+let quizIndex = 0;
+let quizCorrect = 0;
+let quizTotal = 0;
+const QUIZ_LENGTH = 10;
+
+// ==================== SPEECH ====================
+function speak(text, rateInputId) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-GB';
+    const rateEl = document.getElementById(rateInputId || 'speechRate');
+    u.rate = parseFloat(rateEl ? rateEl.value : 0.8);
+    u.pitch = 1;
+    const voices = window.speechSynthesis.getVoices();
+    const enVoice = voices.find(v => v.lang.startsWith('en-GB')) || voices.find(v => v.lang.startsWith('en'));
+    if (enVoice) u.voice = enVoice;
+    window.speechSynthesis.speak(u);
+  }
+}
+
+// ==================== MODE SWITCHING ====================
+function switchMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('nav button').forEach((b, i) => {
+    b.classList.toggle('active', ['list','flashcard','quiz'][i] === mode);
+  });
+  document.getElementById('listMode').classList.toggle('hidden', mode !== 'list');
+  document.getElementById('flashcardMode').classList.toggle('hidden', mode !== 'flashcard');
+  document.getElementById('quizMode').classList.toggle('hidden', mode !== 'quiz');
+
+  if (mode === 'flashcard') initFlashcards();
+  if (mode === 'quiz') startQuiz();
+}
+
+// ==================== WORD LIST ====================
+function getCategories() {
+  return [...new Set(wordData.map(w => w.category))];
+}
+
+function populateFilters() {
+  const cats = getCategories();
+  ['categoryFilter', 'fcCategoryFilter', 'quizCategoryFilter'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    sel.innerHTML = '<option value="all">All Categories</option>';
+    cats.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c;
+      opt.textContent = c;
+      sel.appendChild(opt);
+    });
+  });
+}
+
+function filterWords() {
+  const search = document.getElementById('searchBox').value.toLowerCase();
+  const cat = document.getElementById('categoryFilter').value;
+
+  let filtered = wordData;
+  if (cat !== 'all') filtered = filtered.filter(w => w.category === cat);
+  if (search) filtered = filtered.filter(w =>
+    w.term.toLowerCase().includes(search) ||
+    w.en.toLowerCase().includes(search) ||
+    w.pt.toLowerCase().includes(search)
+  );
+
+  renderWordList(filtered);
+  document.getElementById('wordCount').textContent = filtered.length + ' of ' + wordData.length + ' terms';
+}
+
+function renderWordList(words) {
+  const container = document.getElementById('wordListContent');
+  const grouped = {};
+  words.forEach(w => {
+    if (!grouped[w.category]) grouped[w.category] = [];
+    grouped[w.category].push(w);
+  });
+
+  let html = '';
+  for (const cat of getCategories()) {
+    if (!grouped[cat]) continue;
+    html += '<div class="category-section">';
+    html += '<div class="category-title">' + cat + ' (' + grouped[cat].length + ')</div>';
+    html += '<div class="words-grid">';
+    grouped[cat].forEach(w => {
+      html += '<div class="word-card" onclick="toggleExpand(this)">';
+      html += '<button class="play-btn" onclick="event.stopPropagation(); speak(\'' + w.term.replace(/'/g, "\\'") + '\', \'speechRate\')" title="Listen">&#9654;</button>';
+      html += '<div class="word-info">';
+      html += '<span class="word-term">' + w.term + '</span>';
+      html += '<span class="word-phonetic">' + w.phonetic + '</span>';
+      html += '<div class="word-def-en">' + w.en + '</div>';
+      html += '<div class="word-def-pt">' + w.pt + '</div>';
+      html += '</div></div>';
+    });
+    html += '</div></div>';
+  }
+  container.innerHTML = html;
+}
+
+function toggleExpand(card) {
+  card.classList.toggle('expanded');
+}
+
+// ==================== FLASHCARDS ====================
+function initFlashcards() {
+  const cat = document.getElementById('fcCategoryFilter').value;
+  fcCards = cat === 'all' ? [...wordData] : wordData.filter(w => w.category === cat);
+  fcIndex = 0;
+  fcFlipped = false;
+  renderFlashcard();
+}
+
+function renderFlashcard() {
+  if (fcCards.length === 0) return;
+  const w = fcCards[fcIndex];
+  document.getElementById('fcFrontTerm').textContent = w.term;
+  document.getElementById('fcBackTerm').textContent = w.term;
+  document.getElementById('fcPhonetic').textContent = w.phonetic;
+  document.getElementById('fcDefEn').textContent = w.en;
+  document.getElementById('fcDefPt').textContent = w.pt;
+  document.getElementById('fcProgress').textContent = 'Card ' + (fcIndex + 1) + ' of ' + fcCards.length;
+
+  fcFlipped = false;
+  document.getElementById('flashcard').classList.remove('flipped');
+}
+
+function flipCard() {
+  fcFlipped = !fcFlipped;
+  document.getElementById('flashcard').classList.toggle('flipped', fcFlipped);
+}
+
+function nextCard() {
+  if (fcCards.length === 0) return;
+  fcIndex = (fcIndex + 1) % fcCards.length;
+  renderFlashcard();
+}
+
+function prevCard() {
+  if (fcCards.length === 0) return;
+  fcIndex = (fcIndex - 1 + fcCards.length) % fcCards.length;
+  renderFlashcard();
+}
+
+function shuffleCards() {
+  for (let i = fcCards.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [fcCards[i], fcCards[j]] = [fcCards[j], fcCards[i]];
+  }
+  fcIndex = 0;
+  renderFlashcard();
+}
+
+function speakCurrentFC() {
+  if (fcCards.length > 0) speak(fcCards[fcIndex].term, 'fcSpeechRate');
+}
+
+// ==================== QUIZ ====================
+function setQuizType(type) {
+  quizType = type;
+  document.querySelectorAll('.quiz-type-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.toLowerCase().includes(
+      type === 'def2term' ? 'definition to' : type === 'term2def' ? 'term to' : 'audio'
+    ));
+  });
+  startQuiz();
+}
+
+function startQuiz() {
+  const cat = document.getElementById('quizCategoryFilter').value;
+  let pool = cat === 'all' ? [...wordData] : wordData.filter(w => w.category === cat);
+
+  // Shuffle and pick
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+
+  const count = Math.min(QUIZ_LENGTH, pool.length);
+  quizQuestions = [];
+
+  for (let i = 0; i < count; i++) {
+    const correct = pool[i];
+    // Pick 3 wrong answers
+    const wrong = pool.filter(w => w.term !== correct.term)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3);
+
+    const options = [correct, ...wrong].sort(() => Math.random() - 0.5);
+    quizQuestions.push({ correct, options });
+  }
+
+  quizIndex = 0;
+  quizCorrect = 0;
+  quizTotal = 0;
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion() {
+  if (quizIndex >= quizQuestions.length) {
+    renderQuizResults();
+    return;
+  }
+
+  const q = quizQuestions[quizIndex];
+  const container = document.getElementById('quizContent');
+
+  document.getElementById('quizScore').textContent = 'Score: ' + quizCorrect + ' / ' + quizTotal;
+  document.getElementById('quizProgress').textContent = 'Question ' + (quizIndex + 1) + ' of ' + quizQuestions.length;
+
+  let instruction, questionContent;
+
+  if (quizType === 'def2term') {
+    instruction = 'Which term matches this definition?';
+    questionContent = '<div class="quiz-term" style="font-size:1rem; font-weight:400; color:var(--text);">' + q.correct.en + '</div>';
+  } else if (quizType === 'term2def') {
+    instruction = 'What is the definition of this term?';
+    questionContent = '<div class="quiz-term">' + q.correct.term + '</div>';
+  } else {
+    instruction = 'Listen and identify the term. Click the speaker to hear it again.';
+    questionContent = '<div class="quiz-term"><button class="play-btn" style="width:50px;height:50px;font-size:1.3rem;" onclick="speak(\'' + q.correct.term.replace(/'/g, "\\'") + '\')">&#9654;</button></div>';
+    setTimeout(() => speak(q.correct.term), 300);
+  }
+
+  let optionsHtml = '';
+  q.options.forEach((o, i) => {
+    let label;
+    if (quizType === 'def2term' || quizType === 'audio') {
+      label = o.term;
+    } else {
+      label = o.en;
+    }
+    optionsHtml += '<div class="quiz-option" data-index="' + i + '" data-term="' + o.term + '" onclick="selectAnswer(this, \'' + o.term.replace(/'/g, "\\'") + '\', \'' + q.correct.term.replace(/'/g, "\\'") + '\')">' + label + '</div>';
+  });
+
+  container.innerHTML = '<div class="quiz-question-card">' +
+    '<div class="quiz-instruction">' + instruction + '</div>' +
+    questionContent +
+    '<div class="quiz-options">' + optionsHtml + '</div>' +
+    '<div class="quiz-feedback" id="quizFeedback"></div>' +
+    '</div>' +
+    '<button class="quiz-next" id="quizNextBtn" onclick="nextQuizQuestion()">Next Question</button>';
+}
+
+function selectAnswer(el, selected, correct) {
+  if (el.classList.contains('disabled')) return;
+
+  quizTotal++;
+  const isCorrect = selected === correct;
+  if (isCorrect) quizCorrect++;
+
+  // Mark all options
+  document.querySelectorAll('.quiz-option').forEach(opt => {
+    opt.classList.add('disabled');
+    if (opt.dataset.term === correct) opt.classList.add('correct');
+    if (opt === el && !isCorrect) opt.classList.add('incorrect');
+  });
+
+  const feedback = document.getElementById('quizFeedback');
+  const correctWord = wordData.find(w => w.term === correct);
+  if (isCorrect) {
+    feedback.className = 'quiz-feedback show correct-fb';
+    feedback.textContent = 'Correct! ' + correctWord.phonetic;
+  } else {
+    feedback.className = 'quiz-feedback show incorrect-fb';
+    feedback.textContent = 'The answer is: ' + correct + ' ' + correctWord.phonetic;
+  }
+
+  speak(correct);
+
+  document.getElementById('quizScore').textContent = 'Score: ' + quizCorrect + ' / ' + quizTotal;
+  document.getElementById('quizNextBtn').classList.add('show');
+}
+
+function nextQuizQuestion() {
+  quizIndex++;
+  renderQuizQuestion();
+}
+
+function renderQuizResults() {
+  const pct = Math.round((quizCorrect / quizQuestions.length) * 100);
+  let msg = pct >= 90 ? 'Excellent!' : pct >= 70 ? 'Well done!' : pct >= 50 ? 'Good effort!' : 'Keep practising!';
+
+  document.getElementById('quizContent').innerHTML =
+    '<div class="quiz-results">' +
+    '<h2>Quiz Complete</h2>' +
+    '<div class="big-score">' + pct + '%</div>' +
+    '<p>' + quizCorrect + ' correct out of ' + quizQuestions.length + ' questions</p>' +
+    '<p>' + msg + '</p>' +
+    '<button class="restart-btn" onclick="startQuiz()">Try Again</button>' +
+    '</div>';
+  document.getElementById('quizScore').textContent = 'Final: ' + quizCorrect + ' / ' + quizQuestions.length;
+}
+
+// ==================== INIT ====================
+document.getElementById('speechRate').addEventListener('input', function() {
+  document.getElementById('rateValue').textContent = this.value + 'x';
+});
+document.getElementById('fcSpeechRate').addEventListener('input', function() {
+  document.getElementById('fcRateValue').textContent = this.value + 'x';
+});
+
+// Load voices
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+populateFilters();
+filterWords();
+</script>
+</body>
+</html>
